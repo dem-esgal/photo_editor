@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Фоторедактор</string>
+    <string name="app_name_pro">Эффекты</string>
+    <string name="app_name_track"> </string>
+    <string name="take_photo_camera">Сделать фото</string>
+    <string name="choose_from_gallery">Выбрать изображение</string>
+    <string name="img_desc">Изображения</string>
+    <string name="action_settings">Настройки</string>
+    <string name="or">или</string>
+    <string name="error_img_not_found">Изображение не найдено</string>
+    
+    <string name="internal_storage">Внешнее хранилище</string>
+    <string name="error_apply_effect">Не удалось применить эффект</string>
+    
+    <string name="please_wait">Пожалуйста подождите</string>
+    <string name="exit_prompt">Вы уверены что хотите покинуть редактор?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    
+    <string name="no_media">Ваша SD-карта недоступна</string>
+    
+    <string name="saved">Ваше изображение сохранено at:\n:url:"</string>
+    <string name="save_failed">Ошибка сохранения</string>
+    
+    <string name="redL">Red</string>
+    <string name="greenL">Green</string>
+    <string name="blueL">Blue</string>
+    
+    <string name="hue">Hue: :value:\u00B0</string>
+    <string name="sat">Saturation: :value:%</string>
+    <string name="brightness">Яркость: :value:%</string>
+    <string name="contrast">Контраст: :value:</string>
+    <string name="rotate">Угол: :value:\u00B0</string>
+    <string name="flip_v">Отразить горизонтально</string>
+    <string name="flip_h">Отразить вертикально</string>
+    <string name="red">Red: :value:</string>
+    <string name="green">Green: :value:</string>
+    <string name="blue">Blue: :value:</string>
+    <string name="redP">Red: :value:%</string>
+    <string name="greenP">Green: :value:%</string>
+    <string name="blueP">Blue: :value:%</string>
+    <string name="cdepth">Color Depth: :value:</string>
+    
+    <string name="effect1">Brightness</string>
+    <string name="effect2">Flip</string>
+    <string name="effect3">Hue</string>
+    <string name="effect4">Tint</string>
+    <string name="effect5">Gamma</string>
+    <string name="effect6">Invert</string>
+    <string name="effect7">Grayscale</string>
+    <string name="effect8">Sepia</string>
+    <string name="effect9">Sharpen</string>
+    <string name="effect10">Gau. Blur</string>
+    <string name="effect11">C. Filter</string>
+    <string name="effect12">C. Depth</string>
+    <string name="effect13">Emboss</string>
+    <string name="effect14">Boost</string>
+    <string name="effect15">Noise</string>
+    <string name="effect16">Sketch</string>
+    <string name="effect17">Vignette</string>
+    <string name="effect18">Saturation</string>
+    <string name="effect19">Contrast</string>
+
+</resources>

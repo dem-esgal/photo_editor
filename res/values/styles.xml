@@ -1,0 +1,7 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Application theme. -->
+    <style name="AppThemeBlack" parent="@android:style/Theme.Translucent.NoTitleBar">
+    </style>
+
+</resources>
