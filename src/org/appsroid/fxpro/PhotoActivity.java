@@ -113,7 +113,6 @@ public class PhotoActivity extends Activity {
 	private CameraHelper                       mCameraHelper;
 	private CameraLoader                       mCamera;
 	private GPUImageFilter                     mFilter;
-	private GPUImageFilterTools.FilterAdjuster mFilterAdjuster;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -243,7 +242,6 @@ public class PhotoActivity extends Activity {
 			|| (filter != null && !mFilter.getClass().equals(filter.getClass()))) {
 			mFilter = filter;
 			mGPUImage.setFilter(mFilter);
-			mFilterAdjuster = new GPUImageFilterTools.FilterAdjuster(mFilter);
 		}
 	}
 
@@ -294,10 +292,7 @@ public class PhotoActivity extends Activity {
 			if (bitmap != null) {
 				setLast_bitmap(mGPUImage.getCurrentBitmap());
 				mGPUImage.setImage(bitmap);
-			}/* if (getLast_bitmap() != null) {
-				Toaster.make(getApplicationContext(), R.string.error_img_not_found);
-				backToMain();
-			}*/
+			}
 		} catch (Exception e) {
 			Toaster.make(getApplicationContext(), R.string.error_img_not_found);
 			backToMain();
@@ -393,7 +388,6 @@ public class PhotoActivity extends Activity {
 
 	public void cancelSelectedEffect(View view) {
 		if (!loading_dialog.isShowing()) {
-			mGPUImage.setImage(getLast_bitmap());
 			hideEffectHolder();
 		}
 	}
@@ -871,10 +865,10 @@ public class PhotoActivity extends Activity {
 		if (set) {
 			effects.add(effect);
 		} else {
-			//setImage(getLast_bitmap());
+			setImage(getLast_bitmap());
 		}
 		if (apply) {
-			new ApplyEffects().execute(effect);
+			new ApplyEffects(bitmap()).execute(effect);
 		}
 	}
 
@@ -892,21 +886,14 @@ public class PhotoActivity extends Activity {
 		Bitmap bitmap;
 
 		public ApplyEffects(Bitmap input_bitmap) {
-			bitmap = input_bitmap.copy(input_bitmap.getConfig(), true);
-			input_bitmap.recycle();
-			input_bitmap = null;
+			bitmap = input_bitmap;
 		}
 
-		public ApplyEffects(){
-
-		}
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			Bitmap nullBitmap = null;
 			try {
 				setLast_bitmap(mGPUImage.getCurrentBitmap());
-				//mGPUImage.setImage(nullBitmap);
 			} catch (Exception e) {}
 			if (!loading_dialog.isShowing()) {
 				displayLoading();
@@ -1246,14 +1233,7 @@ public class PhotoActivity extends Activity {
 		dialog.show();
 	}
 
-	private void recycleBitmap() {
-		try {
-			bitmap().recycle();
-		} catch (Exception e) {}
-	}
-
 	private void backToMain(){
-		recycleBitmap();
 
 		if (loading_dialog.isShowing()) {
 			hideLoading();
@@ -1292,8 +1272,6 @@ public class PhotoActivity extends Activity {
 			DisplayMetrics metrics = getResources().getDisplayMetrics();
 			BitmapLoader bitmapLoader = new BitmapLoader();
 
-			recycleBitmap();
-
 			try {
 				return bitmapLoader.load(getApplicationContext(), new int[] { metrics.widthPixels, metrics.heightPixels }, imageUrl);
 			} catch (Exception e) {
@@ -1325,14 +1303,13 @@ public class PhotoActivity extends Activity {
 
 	@SuppressWarnings("unused")
 	private void saveImage() {
-		new recycleAllBitmaps().execute(); 
+		new recycleAllBitmaps().execute();
 	}
 
 	private class recycleAllBitmaps extends AsyncTask<Void, Void, Void> {
 
 		@Override
 		protected Void doInBackground(Void... arg0) {
-			recycleBitmap();
 
 			ImageView imageView;
 			int id;
