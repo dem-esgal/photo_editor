@@ -388,6 +388,7 @@ public class PhotoActivity extends Activity {
 
 	public void cancelSelectedEffect(View view) {
 		if (!loading_dialog.isShowing()) {
+			setImage(getLast_bitmap());
 			hideEffectHolder();
 		}
 	}
@@ -496,13 +497,15 @@ public class PhotoActivity extends Activity {
 	}
 
 	OnSeekBarChangeListener onHueChange = new OnSeekBarChangeListener() {
+
 		@Override
 		public void onStopTrackingTouch(SeekBar arg0) {
 			applyTempSelectedEffect();
 		}
 
 		@Override
-		public void onStartTrackingTouch(SeekBar arg0) {}
+		public void onStartTrackingTouch(SeekBar arg0) {
+		}
 
 		@Override
 		public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
@@ -511,13 +514,15 @@ public class PhotoActivity extends Activity {
 	};
 
 	OnSeekBarChangeListener onSatChange = new OnSeekBarChangeListener() {
+
 		@Override
 		public void onStopTrackingTouch(SeekBar arg0) {
 			applyTempSelectedEffect();
 		}
 
 		@Override
-		public void onStartTrackingTouch(SeekBar arg0) {}
+		public void onStartTrackingTouch(SeekBar arg0) {
+		}
 
 		@Override
 		public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
@@ -526,13 +531,15 @@ public class PhotoActivity extends Activity {
 	};
 
 	OnSeekBarChangeListener onBrightChange = new OnSeekBarChangeListener() {
+
 		@Override
 		public void onStopTrackingTouch(SeekBar arg0) {
 			applyTempSelectedEffect();
 		}
 
 		@Override
-		public void onStartTrackingTouch(SeekBar arg0) {}
+		public void onStartTrackingTouch(SeekBar arg0) {
+		}
 
 		@Override
 		public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
@@ -541,13 +548,15 @@ public class PhotoActivity extends Activity {
 	};
 
 	OnSeekBarChangeListener onCDepthChange = new OnSeekBarChangeListener() {
+
 		@Override
 		public void onStopTrackingTouch(SeekBar arg0) {
 			applyTempSelectedEffect();
 		}
 
 		@Override
-		public void onStartTrackingTouch(SeekBar arg0) {}
+		public void onStartTrackingTouch(SeekBar arg0) {
+		}
 
 		@Override
 		public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
@@ -556,13 +565,15 @@ public class PhotoActivity extends Activity {
 	};
 
 	OnSeekBarChangeListener onContChange = new OnSeekBarChangeListener() {
+
 		@Override
 		public void onStopTrackingTouch(SeekBar arg0) {
 			applyTempSelectedEffect();
 		}
 
 		@Override
-		public void onStartTrackingTouch(SeekBar arg0) {}
+		public void onStartTrackingTouch(SeekBar arg0) {
+		}
 
 		@Override
 		public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
@@ -571,13 +582,15 @@ public class PhotoActivity extends Activity {
 	};
 
 	OnSeekBarChangeListener onRotateChange = new OnSeekBarChangeListener() {
+
 		@Override
 		public void onStopTrackingTouch(SeekBar arg0) {
 			applyTempSelectedEffect();
 		}
 
 		@Override
-		public void onStartTrackingTouch(SeekBar arg0) {}
+		public void onStartTrackingTouch(SeekBar arg0) {
+		}
 
 		@Override
 		public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
@@ -586,13 +599,15 @@ public class PhotoActivity extends Activity {
 	};
 
 	OnSeekBarChangeListener onGRedChange = new OnSeekBarChangeListener() {
+
 		@Override
 		public void onStopTrackingTouch(SeekBar arg0) {
 			applyTempSelectedEffect();
 		}
 
 		@Override
-		public void onStartTrackingTouch(SeekBar arg0) {}
+		public void onStartTrackingTouch(SeekBar arg0) {
+		}
 
 		@Override
 		public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
@@ -601,13 +616,15 @@ public class PhotoActivity extends Activity {
 	};
 
 	OnSeekBarChangeListener onGGreenChange = new OnSeekBarChangeListener() {
+
 		@Override
 		public void onStopTrackingTouch(SeekBar arg0) {
 			applyTempSelectedEffect();
 		}
 
 		@Override
-		public void onStartTrackingTouch(SeekBar arg0) {}
+		public void onStartTrackingTouch(SeekBar arg0) {
+		}
 
 		@Override
 		public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
@@ -616,13 +633,15 @@ public class PhotoActivity extends Activity {
 	};
 
 	OnSeekBarChangeListener onBGreenChange = new OnSeekBarChangeListener() {
+
 		@Override
 		public void onStopTrackingTouch(SeekBar arg0) {
 			applyTempSelectedEffect();
 		}
 
 		@Override
-		public void onStartTrackingTouch(SeekBar arg0) {}
+		public void onStartTrackingTouch(SeekBar arg0) {
+		}
 
 		@Override
 		public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
@@ -631,13 +650,15 @@ public class PhotoActivity extends Activity {
 	};
 
 	OnSeekBarChangeListener onBRedChange = new OnSeekBarChangeListener() {
+
 		@Override
 		public void onStopTrackingTouch(SeekBar arg0) {
 			applyTempSelectedEffect();
 		}
 
 		@Override
-		public void onStartTrackingTouch(SeekBar arg0) {}
+		public void onStartTrackingTouch(SeekBar arg0) {
+		}
 
 		@Override
 		public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
@@ -646,13 +667,15 @@ public class PhotoActivity extends Activity {
 	};
 
 	OnSeekBarChangeListener onBBlueChange = new OnSeekBarChangeListener() {
+
 		@Override
 		public void onStopTrackingTouch(SeekBar arg0) {
 			applyTempSelectedEffect();
 		}
 
 		@Override
-		public void onStartTrackingTouch(SeekBar arg0) {}
+		public void onStartTrackingTouch(SeekBar arg0) {
+		}
 
 		@Override
 		public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
@@ -661,13 +684,15 @@ public class PhotoActivity extends Activity {
 	};
 
 	OnSeekBarChangeListener onGBlueChange = new OnSeekBarChangeListener() {
+
 		@Override
 		public void onStopTrackingTouch(SeekBar arg0) {
 			applyTempSelectedEffect();
 		}
 
 		@Override
-		public void onStartTrackingTouch(SeekBar arg0) {}
+		public void onStartTrackingTouch(SeekBar arg0) {
+		}
 
 		@Override
 		public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
@@ -676,13 +701,15 @@ public class PhotoActivity extends Activity {
 	};
 
 	OnSeekBarChangeListener onBoostChange = new OnSeekBarChangeListener() {
+
 		@Override
 		public void onStopTrackingTouch(SeekBar arg0) {
 			applyTempSelectedEffect();
 		}
 
 		@Override
-		public void onStartTrackingTouch(SeekBar arg0) {}
+		public void onStartTrackingTouch(SeekBar arg0) {
+		}
 
 		@Override
 		public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
@@ -882,7 +909,9 @@ public class PhotoActivity extends Activity {
 		}
 	}
 
-	private class ApplyEffects extends AsyncTask<String, Void, Bitmap> {
+	private class ApplyEffects
+			extends AsyncTask<String, Void, Bitmap> {
+
 		Bitmap bitmap;
 
 		public ApplyEffects(Bitmap input_bitmap) {
@@ -893,8 +922,9 @@ public class PhotoActivity extends Activity {
 		protected void onPreExecute() {
 			super.onPreExecute();
 			try {
-				setLast_bitmap(mGPUImage.getCurrentBitmap());
-			} catch (Exception e) {}
+				setLast_bitmap(bitmap);
+			} catch (Exception e) {
+			}
 			if (!loading_dialog.isShowing()) {
 				displayLoading();
 			}
@@ -923,7 +953,7 @@ public class PhotoActivity extends Activity {
 					effect = properties[0];
 					bright_value.setProgress(Integer.parseInt(properties[1]));
 
-				}  else if (effect.startsWith("contrast") && effect.contains("_")) {
+				} else if (effect.startsWith("contrast") && effect.contains("_")) {
 
 					String[] properties = effect.split("_");
 					effect = properties[0];
@@ -951,7 +981,7 @@ public class PhotoActivity extends Activity {
 					effect = properties[0];
 					cdepth_value.setProgress(Integer.parseInt(properties[1]));
 
-				}  else if (effect.startsWith("cbalance") && effect.contains("_")) {
+				} else if (effect.startsWith("cbalance") && effect.contains("_")) {
 
 					String[] properties = effect.split("_");
 					effect = properties[0];
@@ -976,9 +1006,9 @@ public class PhotoActivity extends Activity {
 
 				// Apply Filters
 				if (effect.equals("brightness")) {
-					try{
+					try {
 						float val = bright_value.getProgress() - 200;
-						mFilter = new GPUImageBrightnessFilter(val/200);
+						mFilter = new GPUImageBrightnessFilter(val / 200);
 						mGPUImage.setFilter(mFilter);
 						bitmap = mGPUImage.getBitmapWithFilterApplied();
 						//bitmap = BitmapProcessing.brightness(bitmap, bright_value.getProgress() - 200);
@@ -986,9 +1016,9 @@ public class PhotoActivity extends Activity {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("contrast")) {
-					try{
+					try {
 						float val = cont_value.getProgress() - 50;
-						mFilter = new GPUImageContrastFilter(1f+val/50);
+						mFilter = new GPUImageContrastFilter(1f + val / 50);
 						mGPUImage.setFilter(mFilter);
 						bitmap = mGPUImage.getBitmapWithFilterApplied();
 						//bitmap = BitmapProcessing.contrast(bitmap, cont_value.getProgress() - 50);
@@ -996,13 +1026,13 @@ public class PhotoActivity extends Activity {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("noise")) {
-					try{
+					try {
 						bitmap = BitmapProcessing.noise(bitmap);
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("flip")) {
-					try{
+					try {
 						bitmap = BitmapProcessing.rotate(BitmapProcessing.flip(bitmap, flip_h, flip_v), (float) rotate_value.getProgress());
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
@@ -1014,19 +1044,19 @@ public class PhotoActivity extends Activity {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("tint")) {
-					try{
+					try {
 						bitmap = BitmapProcessing.tint(bitmap, tint_color);
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("gamma")) {
-					try{
+					try {
 						bitmap = BitmapProcessing.gamma(bitmap, (double) gRed_value.getProgress(), (double) gGreen_value.getProgress(), (double) gBlue_value.getProgress());
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("invert")) {
-					try{
+					try {
 						bitmap = BitmapProcessing.invert(bitmap);
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
@@ -1038,13 +1068,13 @@ public class PhotoActivity extends Activity {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("sepia")) {
-					try{
+					try {
 						bitmap = BitmapProcessing.sepia(bitmap);
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("sharpen")) {
-					try{
+					try {
 						mFilter = new GPUImageSharpenFilter();
 						mGPUImage.setFilter(mFilter);
 						bitmap = mGPUImage.getBitmapWithFilterApplied();
@@ -1053,31 +1083,31 @@ public class PhotoActivity extends Activity {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("gaussian")) {
-					try{
+					try {
 						bitmap = BitmapProcessing.gaussian(bitmap);
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("cbalance")) {
-					try{
+					try {
 						bitmap = BitmapProcessing.cfilter(bitmap, (double) bRed_value.getProgress(), (double) bGreen_value.getProgress(), (double) bBlue_value.getProgress());
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("cdepth")) {
-					try{
+					try {
 						bitmap = BitmapProcessing.cdepth(bitmap, (int) Math.pow(2, 7 - cdepth_value.getProgress()));
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("emboss")) {
-					try{
+					try {
 						bitmap = BitmapProcessing.emboss(bitmap);
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("boost")) {
-					try{
+					try {
 						bitmap = BitmapProcessing.boost(bitmap, boost_type, (float) boost_value.getProgress());
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
@@ -1119,7 +1149,8 @@ public class PhotoActivity extends Activity {
 
 				try {
 					file.mkdirs();
-				} catch(Exception e) {}
+				} catch (Exception e) {
+				}
 
 				file = new File(path, "EffectsPro/" + fileName + ".jpg");
 
@@ -1140,7 +1171,8 @@ public class PhotoActivity extends Activity {
 		}
 	}
 
-	private class BitmapWriterWorker extends BitmapWriter {
+	private class BitmapWriterWorker
+			extends BitmapWriter {
 
 		public BitmapWriterWorker(File input_file, Bitmap input_bitmap) {
 			super(input_file, input_bitmap);
