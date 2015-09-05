@@ -293,7 +293,7 @@ public class PhotoActivity extends Activity {
 		try {
 			if (bitmap != null) {
 				setLast_bitmap(mGPUImage.getCurrentBitmap());
-				mGPUImage.setCurrentBitmap(bitmap);
+				mGPUImage.setImage(bitmap);
 			}/* if (getLast_bitmap() != null) {
 				Toaster.make(getApplicationContext(), R.string.error_img_not_found);
 				backToMain();
@@ -871,10 +871,10 @@ public class PhotoActivity extends Activity {
 		if (set) {
 			effects.add(effect);
 		} else {
-			setImage(getLast_bitmap());
+			//setImage(getLast_bitmap());
 		}
 		if (apply) {
-			new ApplyEffects(bitmap()).execute(effect);
+			new ApplyEffects().execute(effect);
 		}
 	}
 
@@ -897,6 +897,9 @@ public class PhotoActivity extends Activity {
 			input_bitmap = null;
 		}
 
+		public ApplyEffects(){
+
+		}
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
