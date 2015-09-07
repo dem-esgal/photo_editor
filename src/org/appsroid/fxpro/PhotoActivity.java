@@ -41,11 +41,22 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import jp.co.cyberagent.android.gpuimage.GPUImage;
 import jp.co.cyberagent.android.gpuimage.GPUImageBrightnessFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageColorBalanceFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageColorInvertFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageContrastFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageEmbossFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageGammaFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageGaussianBlurFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageGrayscaleFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageHueFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageSaturationFilter;
 import jp.co.cyberagent.android.gpuimage.GPUImageSharpenFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageSketchFilter;
+import jp.co.cyberagent.android.gpuimage.GPUImageVignetteFilter;
 
-public class PhotoActivity extends Activity {
+public class PhotoActivity
+		extends Activity {
 
 	private Animation         animation;
 	//private ImageView         image_holder;
@@ -109,10 +120,10 @@ public class PhotoActivity extends Activity {
 	private TextView cdepth_label;
 
 	private boolean save_status = false;
-	private GPUImage                           mGPUImage;
-	private CameraHelper                       mCameraHelper;
-	private CameraLoader                       mCamera;
-	private GPUImageFilter                     mFilter;
+	private GPUImage       mGPUImage;
+	private CameraHelper   mCameraHelper;
+	private CameraLoader   mCamera;
+	private GPUImageFilter mFilter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -237,29 +248,22 @@ public class PhotoActivity extends Activity {
 		}
 	}
 
-	private void switchFilterTo(final GPUImageFilter filter) {
-		if (mFilter == null
-			|| (filter != null && !mFilter.getClass().equals(filter.getClass()))) {
-			mFilter = filter;
-			mGPUImage.setFilter(mFilter);
-		}
-	}
-
-
 	private void flyOut(final String method_name) {
 		if (!loading_dialog.isShowing()) {
 			displayLoading();
 			try {
 				if (method_name.equals("reloadImage")) {
-					Vibrator vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+					Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 					vibrator.vibrate(200);
 				}
-			} catch (Exception e) {}
+			} catch (Exception e) {
+			}
 
 			animation = AnimationUtils.loadAnimation(this, R.anim.holder_top_back_fast);
 			btn_holder.startAnimation(animation);
 
 			animation.setAnimationListener(new AnimationListener() {
+
 				@Override
 				public void onAnimationStart(Animation arg0) {
 				}
@@ -283,14 +287,17 @@ public class PhotoActivity extends Activity {
 		try {
 			Method method = getClass().getDeclaredMethod(method_name);
 			method.invoke(this, new Object[] {});
-		} catch (Exception e) {}
+		} catch (Exception e) {
+		}
 	}
 
 	private void setImage(Bitmap bitmap) {
 		hideLoading();
 		try {
 			if (bitmap != null) {
-				setLast_bitmap(mGPUImage.getCurrentBitmap());
+				if (getLast_bitmap() == null) {
+					setLast_bitmap(bitmap);
+				}
 				mGPUImage.setImage(bitmap);
 			}
 		} catch (Exception e) {
@@ -334,8 +341,9 @@ public class PhotoActivity extends Activity {
 					bright_value.setOnSeekBarChangeListener(null);
 
 				} else {
-					selected_effect = selected_effect + "_" + bright_value.getProgress();			}
-			}  else if (selected_effect.equals("contrast")) {
+					selected_effect = selected_effect + "_" + bright_value.getProgress();
+				}
+			} else if (selected_effect.equals("contrast")) {
 				if (cont_value.getProgress() == 50) {
 
 					selected_effect = "";
@@ -411,7 +419,6 @@ public class PhotoActivity extends Activity {
 
 
 		if (noOptions.indexOf(effect) == -1) {
-			//last_bitmap = bitmap().copy(bitmap().getConfig(), false);
 			selected_effect = effect;
 
 			displayEffectHolder();
@@ -476,6 +483,7 @@ public class PhotoActivity extends Activity {
 		apply_set.startAnimation(animation);
 
 		animation.setAnimationListener(new AnimationListener() {
+
 			@Override
 			public void onAnimationStart(Animation arg0) {
 			}
@@ -891,8 +899,7 @@ public class PhotoActivity extends Activity {
 	private void applyEffect(String effect, boolean set, boolean apply) {
 		if (set) {
 			effects.add(effect);
-		} else {
-			setImage(getLast_bitmap());
+			setLast_bitmap(bitmap());
 		}
 		if (apply) {
 			new ApplyEffects(bitmap()).execute(effect);
@@ -903,9 +910,9 @@ public class PhotoActivity extends Activity {
 		return last_bitmap;
 	}
 
-	public void setLast_bitmap(Bitmap last_bitmap) {
-		if (last_bitmap != null) {
-			this.last_bitmap = last_bitmap;
+	public void setLast_bitmap(Bitmap bitmap) {
+		if (bitmap != null) {
+			this.last_bitmap = bitmap.copy(bitmap.getConfig(), false);
 		}
 	}
 
@@ -915,16 +922,12 @@ public class PhotoActivity extends Activity {
 		Bitmap bitmap;
 
 		public ApplyEffects(Bitmap input_bitmap) {
-			bitmap = input_bitmap;
+			bitmap = input_bitmap.copy(input_bitmap.getConfig(), true);
 		}
 
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			try {
-				setLast_bitmap(bitmap);
-			} catch (Exception e) {
-			}
 			if (!loading_dialog.isShowing()) {
 				displayLoading();
 			}
@@ -1010,7 +1013,7 @@ public class PhotoActivity extends Activity {
 						float val = bright_value.getProgress() - 200;
 						mFilter = new GPUImageBrightnessFilter(val / 200);
 						mGPUImage.setFilter(mFilter);
-						bitmap = mGPUImage.getBitmapWithFilterApplied();
+						bitmap = mGPUImage.getCurrentBitmap();
 						//bitmap = BitmapProcessing.brightness(bitmap, bright_value.getProgress() - 200);
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
@@ -1020,50 +1023,32 @@ public class PhotoActivity extends Activity {
 						float val = cont_value.getProgress() - 50;
 						mFilter = new GPUImageContrastFilter(1f + val / 50);
 						mGPUImage.setFilter(mFilter);
-						bitmap = mGPUImage.getBitmapWithFilterApplied();
+						bitmap = mGPUImage.getCurrentBitmap();
 						//bitmap = BitmapProcessing.contrast(bitmap, cont_value.getProgress() - 50);
-					} catch (Exception e) {
-						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
-					}
-				} else if (effect.equals("noise")) {
-					try {
-						bitmap = BitmapProcessing.noise(bitmap);
-					} catch (Exception e) {
-						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
-					}
-				} else if (effect.equals("flip")) {
-					try {
-						bitmap = BitmapProcessing.rotate(BitmapProcessing.flip(bitmap, flip_h, flip_v), (float) rotate_value.getProgress());
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("hue")) {
 					try {
-						bitmap = BitmapProcessing.hue(bitmap, (float) hue_value.getProgress());
-					} catch (Exception e) {
-						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
-					}
-				} else if (effect.equals("tint")) {
-					try {
-						bitmap = BitmapProcessing.tint(bitmap, tint_color);
-					} catch (Exception e) {
-						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
-					}
-				} else if (effect.equals("gamma")) {
-					try {
-						bitmap = BitmapProcessing.gamma(bitmap, (double) gRed_value.getProgress(), (double) gGreen_value.getProgress(), (double) gBlue_value.getProgress());
+						mFilter = new GPUImageHueFilter((float) hue_value.getProgress());
+						mGPUImage.setFilter(mFilter);
+						bitmap = mGPUImage.getCurrentBitmap();
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("invert")) {
 					try {
-						bitmap = BitmapProcessing.invert(bitmap);
+						mFilter = new GPUImageColorInvertFilter();
+						mGPUImage.setFilter(mFilter);
+						bitmap = mGPUImage.getCurrentBitmap();
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("grayscale")) {
 					try {
-						bitmap = BitmapProcessing.grayscale(bitmap);
+						mFilter = new GPUImageGrayscaleFilter();
+						mGPUImage.setFilter(mFilter);
+						bitmap = mGPUImage.getCurrentBitmap();
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
@@ -1077,56 +1062,56 @@ public class PhotoActivity extends Activity {
 					try {
 						mFilter = new GPUImageSharpenFilter();
 						mGPUImage.setFilter(mFilter);
-						bitmap = mGPUImage.getBitmapWithFilterApplied();
+						bitmap = mGPUImage.getCurrentBitmap();
 						//bitmap = BitmapProcessing.sharpen(bitmap);
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("gaussian")) {
 					try {
-						bitmap = BitmapProcessing.gaussian(bitmap);
+						mFilter = new GPUImageGaussianBlurFilter();
+						mGPUImage.setFilter(mFilter);
+						bitmap = mGPUImage.getCurrentBitmap();
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("cbalance")) {
 					try {
-						bitmap = BitmapProcessing.cfilter(bitmap, (double) bRed_value.getProgress(), (double) bGreen_value.getProgress(), (double) bBlue_value.getProgress());
+						mFilter = new GPUImageColorBalanceFilter();
+						mGPUImage.setFilter(mFilter);
+						bitmap = mGPUImage.getCurrentBitmap();
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
-				} else if (effect.equals("cdepth")) {
+				}  else if (effect.equals("emboss")) {
 					try {
-						bitmap = BitmapProcessing.cdepth(bitmap, (int) Math.pow(2, 7 - cdepth_value.getProgress()));
-					} catch (Exception e) {
-						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
-					}
-				} else if (effect.equals("emboss")) {
-					try {
-						bitmap = BitmapProcessing.emboss(bitmap);
-					} catch (Exception e) {
-						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
-					}
-				} else if (effect.equals("boost")) {
-					try {
-						bitmap = BitmapProcessing.boost(bitmap, boost_type, (float) boost_value.getProgress());
+						mFilter = new GPUImageEmbossFilter();
+						mGPUImage.setFilter(mFilter);
+						bitmap = mGPUImage.getCurrentBitmap();
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("sketch")) {
 					try {
-						bitmap = BitmapProcessing.sketch(BitmapProcessing.grayscale(bitmap));
+						mFilter = new GPUImageSketchFilter();
+						mGPUImage.setFilter(mFilter);
+						bitmap = mGPUImage.getCurrentBitmap();
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("vignette")) {
 					try {
-						bitmap = BitmapProcessing.vignette(bitmap);
+						mFilter = new GPUImageVignetteFilter();
+						mGPUImage.setFilter(mFilter);
+						bitmap = mGPUImage.getCurrentBitmap();
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
 				} else if (effect.equals("saturation")) {
 					try {
-						bitmap = BitmapProcessing.saturation(bitmap, sat_value.getProgress());
+						mFilter = new GPUImageSaturationFilter();
+						mGPUImage.setFilter(mFilter);
+						bitmap = mGPUImage.getCurrentBitmap();
 					} catch (Exception e) {
 						Toaster.make(getApplicationContext(), R.string.error_apply_effect);
 					}
@@ -1165,8 +1150,10 @@ public class PhotoActivity extends Activity {
 			} else {
 				if (btn_holder.getVisibility() == View.GONE) {
 					flyIn();
+				} else {
+					flyIn();
 				}
-				setImage(bitmap);
+				///setImage(bitmap);//nnn
 			}
 		}
 	}
@@ -1197,9 +1184,11 @@ public class PhotoActivity extends Activity {
 		bitmaporker.execute();
 	}
 
-	private class BitmapWorkerTask extends AsyncTask<Void, Void, Bitmap> {
+	private class BitmapWorkerTask
+			extends AsyncTask<Void, Void, Bitmap> {
+
 		DisplayMetrics metrics;
-		BitmapLoader bitmapLoader;
+		BitmapLoader   bitmapLoader;
 
 		public BitmapWorkerTask() {
 			metrics = getResources().getDisplayMetrics();
@@ -1225,10 +1214,12 @@ public class PhotoActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(Bitmap bitmap) {
-			if (bitmap != null) {
-				toolbox.setVisibility(View.VISIBLE);
-				setImage(bitmap);
-			} else {
+			try {
+				if (bitmap != null) {
+					toolbox.setVisibility(View.VISIBLE);
+					setImage(bitmap);
+				}
+			} catch (Exception e) {
 				Toaster.make(getApplicationContext(), R.string.error_img_not_found);
 				backToMain();
 			}
@@ -1237,7 +1228,7 @@ public class PhotoActivity extends Activity {
 
 	@Override
 	public void onBackPressed() {
-		if (apply_set.getVisibility() == View.VISIBLE){
+		if (apply_set.getVisibility() == View.VISIBLE) {
 			cancelSelectedEffect(null);
 		} else {
 			displayBackDialog();
@@ -1248,6 +1239,7 @@ public class PhotoActivity extends Activity {
 		final BackDialog dialog = new BackDialog(PhotoActivity.this);
 
 		dialog.positive.setOnClickListener(new View.OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
 				dialog.dismiss();
@@ -1256,6 +1248,7 @@ public class PhotoActivity extends Activity {
 		});
 
 		dialog.negative.setOnClickListener(new View.OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
 				dialog.dismiss();
@@ -1265,7 +1258,7 @@ public class PhotoActivity extends Activity {
 		dialog.show();
 	}
 
-	private void backToMain(){
+	private void backToMain() {
 
 		if (loading_dialog.isShowing()) {
 			hideLoading();
@@ -1291,7 +1284,9 @@ public class PhotoActivity extends Activity {
 		new RevertEffects().execute();
 	}
 
-	private class RevertEffects extends AsyncTask<Void, Void, Bitmap> {
+	private class RevertEffects
+			extends AsyncTask<Void, Void, Bitmap> {
+
 		@Override
 		protected void onPreExecute() {
 			//image_holder.setVisibility(View.GONE);
@@ -1301,11 +1296,9 @@ public class PhotoActivity extends Activity {
 
 		@Override
 		protected Bitmap doInBackground(Void... arg0) {
-			DisplayMetrics metrics = getResources().getDisplayMetrics();
-			BitmapLoader bitmapLoader = new BitmapLoader();
 
 			try {
-				return bitmapLoader.load(getApplicationContext(), new int[] { metrics.widthPixels, metrics.heightPixels }, imageUrl);
+				return getLast_bitmap();
 			} catch (Exception e) {
 				return null;
 			}
@@ -1313,20 +1306,20 @@ public class PhotoActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(Bitmap bitmap) {
-			if (bitmap != null) {
-				//image_holder.setVisibility(View.VISIBLE);
-
-				if (effects.size() < 2) {
-					effects = new ArrayList<String>();
-					setImage(bitmap);
-					flyIn();
-				} else {
-					effects.remove(effects.size() - 1);
-					String[] effects_array = new String[effects.size()];
-					effects_array = effects.toArray(effects_array);
-					new ApplyEffects(bitmap).execute(effects_array);
+			try {
+				if (bitmap != null) {
+					//if (effects.size() < 2) {
+						effects = new ArrayList<String>();
+						setImage(bitmap);
+						flyIn();
+					/*} else {
+						effects.remove(effects.size() - 1);
+						String[] effects_array = new String[effects.size()];
+						effects_array = effects.toArray(effects_array);
+						new ApplyEffects(bitmap).execute(effects_array);
+					}*/
 				}
-			} else {
+			} catch (Exception e) {
 				Toaster.make(getApplicationContext(), R.string.error_img_not_found);
 				backToMain();
 			}
@@ -1338,7 +1331,8 @@ public class PhotoActivity extends Activity {
 		new recycleAllBitmaps().execute();
 	}
 
-	private class recycleAllBitmaps extends AsyncTask<Void, Void, Void> {
+	private class recycleAllBitmaps
+			extends AsyncTask<Void, Void, Void> {
 
 		@Override
 		protected Void doInBackground(Void... arg0) {
@@ -1353,7 +1347,8 @@ public class PhotoActivity extends Activity {
 				try {
 					((BitmapDrawable) imageView.getDrawable()).getBitmap().recycle();
 					imageView.setImageBitmap(null);
-				} catch (Exception e) {}
+				} catch (Exception e) {
+				}
 			}
 
 			return null;
@@ -1363,8 +1358,8 @@ public class PhotoActivity extends Activity {
 		protected void onPostExecute(Void result) {
 			save_status = true;
 
-			ViewGroup root = (ViewGroup) toolbox.getRootView();     
-			root.removeView(toolbox); 
+			ViewGroup root = (ViewGroup) toolbox.getRootView();
+			root.removeView(toolbox);
 			//root.removeView(image_holder);
 
 			System.gc();
@@ -1373,7 +1368,8 @@ public class PhotoActivity extends Activity {
 
 	}
 
-	private class OriginalImageLoader extends AsyncTask<Void, Void, Bitmap> {
+	private class OriginalImageLoader
+			extends AsyncTask<Void, Void, Bitmap> {
 
 		@Override
 		protected Bitmap doInBackground(Void... arg0) {
@@ -1387,11 +1383,13 @@ public class PhotoActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(Bitmap bitmap) {
-			if (bitmap != null) {
-				String[] effects_array = new String[effects.size()];
-				effects_array = effects.toArray(effects_array);
-				new ApplyEffects(bitmap).execute(effects.toArray(effects_array));
-			} else {
+			try {
+				if (bitmap != null) {
+					String[] effects_array = new String[effects.size()];
+					effects_array = effects.toArray(effects_array);
+					new ApplyEffects(bitmap).execute(effects.toArray(effects_array));
+				}
+			} catch (Exception e) {
 				Toaster.make(getApplicationContext(), R.string.error_img_not_found);
 				backToMain();
 			}
@@ -1421,7 +1419,7 @@ public class PhotoActivity extends Activity {
 		outState.putParcelable(Constants.KEY_BITMAP, bitmap());
 	}
 
-	public void onClickEffectButton(View view){
+	public void onClickEffectButton(View view) {
 		if (!loading_dialog.isShowing()) {
 			displayLoading();
 			if (effects.size() == 0) {
@@ -1438,7 +1436,8 @@ public class PhotoActivity extends Activity {
 	private void hideLoading() {
 		try {
 			loading_dialog.dismiss();
-		} catch (Exception e) {}
+		} catch (Exception e) {
+		}
 	}
 
 
@@ -1480,7 +1479,9 @@ public class PhotoActivity extends Activity {
 			mGPUImage.setUpCamera(mCameraInstance, orientation, flipHorizontal, false);
 		}
 
-		/** A safe way to get an instance of the Camera object. */
+		/**
+		 * A safe way to get an instance of the Camera object.
+		 */
 		private Camera getCameraInstance(final int id) {
 			Camera c = null;
 			try {
