@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="org.appsroid.fxpro"
+    package="org.appsroid.panda"
     android:versionCode="1"
     android:versionName="1.1.0" >
 
@@ -25,12 +25,12 @@
         android:theme="@android:style/Theme.Black.NoTitleBar"
         tools:ignore="UnusedAttribute" >
         <activity
-            android:name="org.appsroid.fxpro.MainActivity"
+            android:name="org.appsroid.panda.MainActivity"
             android:label="@string/app_name" />
         <activity
-            android:name="org.appsroid.fxpro.PhotoActivity" />
+            android:name="org.appsroid.panda.PhotoActivity" />
         <activity
-            android:name="org.appsroid.fxpro.SplashActivity"
+            android:name="org.appsroid.panda.SplashActivity"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
             <intent-filter>
