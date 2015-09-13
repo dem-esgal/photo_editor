@@ -28,6 +28,17 @@ import android.util.Log;
 public class OpenGlUtils {
     public static final int NO_TEXTURE = -1;
 
+    public static int loadSubimageTexture(final Bitmap img, final int usedTexId, final boolean recycle, final int xoffset, final int yoffset) {
+        int textures[] = new int[1];
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, usedTexId);
+        GLUtils.texSubImage2D(GLES20.GL_TEXTURE_2D, 0, xoffset, yoffset, img);
+        textures[0] = usedTexId;
+        if (recycle) {
+            img.recycle();
+        }
+        return textures[0];
+    }
+
     public static int loadTexture(final Bitmap img, final int usedTexId) {
         return loadTexture(img, usedTexId, true);
     }

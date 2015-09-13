@@ -54,17 +54,18 @@ public class TouchGLView
 	public boolean onScroll(MotionEvent e1, MotionEvent e2,
 			final float dx, final float dy) {
 		// Forward the drag event to the renderer.
-		queueEvent(new Runnable() {
+		/*queueEvent(new Runnable() {
 
 			public void run() {
 				// This Runnable will be executed on the render
 				// thread.
 				// In a real app, you'd want to divide these by
 				// the display resolution first.
+
 				mRenderer.drag(dx, dy);
 				requestRender();
 			}
-		});
+		});*/
 		mLastNonTapTouchEventTimeNS = System.nanoTime();
 		return true;
 	}
@@ -99,6 +100,20 @@ public class TouchGLView
 
 	@Override
 	public boolean onDown(MotionEvent e) {
+		final int x = (int)e.getX();
+		final int y = (int)e.getY();
+		queueEvent(new Runnable() {
+
+			public void run() {
+				// This Runnable will be executed on the render
+				// thread.
+				// In a real app, you'd want to divide these by
+				// the display resolution first.
+
+				mRenderer.replace(x,y);
+				requestRender();
+			}
+		});
 		return false;
 	}
 

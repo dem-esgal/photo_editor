@@ -19,6 +19,7 @@ package org.appsroid.panda.gpuimage;
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
@@ -264,8 +265,48 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
         computeOutputVertices();
     }
 
+    public void replace(final int x, final int y) {
+        Bitmap bmp = Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888);
+        int[] imageARGB = new int[50 * 50];
+        for(int i = 0; i < imageARGB.length; i++){
+            imageARGB[i] = Color.argb(255, 255, 0, 0);
+        }
+        bmp.setPixels(imageARGB, 0, 50, 0, 0, 50, 50);
+        setImageBitmap(bmp,x,y,true);
+    }
+
     public void setImageBitmap(final Bitmap bitmap) {
         setImageBitmap(bitmap, true);
+    }
+    public void setImageBitmap(final Bitmap bitmap, final int xoffset, final int yoffset, final boolean recycle) {
+        if (bitmap == null) {
+            return;
+        }
+
+        runOnDraw(new Runnable() {
+
+            @Override
+            public void run() {
+                Bitmap resizedBitmap = null;
+                if (bitmap.getWidth() % 2 == 1) {
+                    resizedBitmap = Bitmap.createBitmap(bitmap.getWidth() + 1, bitmap.getHeight(),
+                            Bitmap.Config.ARGB_8888);
+
+                    Canvas can = new Canvas(resizedBitmap);
+                    can.drawARGB(0x00, 0x00, 0x00, 0x00);
+                    can.drawBitmap(bitmap, 0, 0, null);
+                    mAddedPadding = 1;
+                } else {
+                    mAddedPadding = 0;
+                }
+
+                mGLTextureId = OpenGlUtils.loadSubimageTexture(
+                        resizedBitmap != null ? resizedBitmap : bitmap, mGLTextureId, recycle, xoffset, yoffset);
+                if (resizedBitmap != null) {
+                    resizedBitmap.recycle();
+                }
+            }
+        });
     }
 
     public void setImageBitmap(final Bitmap bitmap, final boolean recycle) {
