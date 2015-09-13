@@ -97,7 +97,7 @@ public class GPUImage {
         mGlSurfaceView.setEGLContextClientVersion(2);
         mGlSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         mGlSurfaceView.getHolder().setFormat(PixelFormat.RGBA_8888);
-        mGlSurfaceView.setRenderer(mRenderer);
+        mGlSurfaceView.setRenderer(getmRenderer());
         mGlSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         mGlSurfaceView.requestRender();
     }
@@ -134,7 +134,7 @@ public class GPUImage {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
             setUpCameraGingerbread(camera);
         } else {
-            camera.setPreviewCallback(mRenderer);
+            camera.setPreviewCallback(getmRenderer());
             camera.startPreview();
         }
         Rotation rotation = Rotation.NORMAL;
@@ -149,12 +149,12 @@ public class GPUImage {
                 rotation = Rotation.ROTATION_270;
                 break;
         }
-        mRenderer.setRotationCamera(rotation, flipHorizontal, flipVertical);
+        getmRenderer().setRotationCamera(rotation, flipHorizontal, flipVertical);
     }
 
     @TargetApi(11)
     private void setUpCameraGingerbread(final Camera camera) {
-        mRenderer.setUpSurfaceTexture(camera);
+        getmRenderer().setUpSurfaceTexture(camera);
     }
 
     /**
@@ -165,7 +165,7 @@ public class GPUImage {
      */
     public void setFilter(final GPUImageFilter filter) {
         mFilter = filter;
-        mRenderer.setFilter(mFilter);
+        getmRenderer().setFilter(mFilter);
         requestRender();
     }
 
@@ -176,7 +176,7 @@ public class GPUImage {
      */
     public void setImage(final Bitmap bitmap) {
         setCurrentBitmap(bitmap);
-        mRenderer.setImageBitmap(bitmap, false);
+        getmRenderer().setImageBitmap(bitmap, false);
         requestRender();
     }
 
@@ -188,8 +188,8 @@ public class GPUImage {
      */
     public void setScaleType(ScaleType scaleType) {
         mScaleType = scaleType;
-        mRenderer.setScaleType(scaleType);
-        mRenderer.deleteImage();
+        getmRenderer().setScaleType(scaleType);
+        getmRenderer().deleteImage();
         setCurrentBitmap(null);
         requestRender();
     }
@@ -200,14 +200,14 @@ public class GPUImage {
      * @param rotation new rotation
      */
     public void setRotation(Rotation rotation) {
-        mRenderer.setRotation(rotation);
+        getmRenderer().setRotation(rotation);
     }
 
     /**
      * Deletes the current image.
      */
     public void deleteImage() {
-        mRenderer.deleteImage();
+        getmRenderer().deleteImage();
         setCurrentBitmap(null);
         requestRender();
     }
@@ -262,12 +262,12 @@ public class GPUImage {
      */
     public Bitmap getBitmapWithFilterApplied(final Bitmap bitmap) {
         if (mGlSurfaceView != null) {
-            mRenderer.deleteImage();
-            mRenderer.runOnDraw(new Runnable() {
+            getmRenderer().deleteImage();
+            getmRenderer().runOnDraw(new Runnable() {
 
                 @Override
                 public void run() {
-                    synchronized(mFilter) {
+                    synchronized (mFilter) {
                         mFilter.destroy();
                         mFilter.notify();
                     }
@@ -285,7 +285,7 @@ public class GPUImage {
 
         GPUImageRenderer renderer = new GPUImageRenderer(mFilter);
         renderer.setRotation(Rotation.NORMAL,
-                mRenderer.isFlippedHorizontally(), mRenderer.isFlippedVertically());
+                getmRenderer().isFlippedHorizontally(), getmRenderer().isFlippedVertically());
         renderer.setScaleType(mScaleType);
         PixelBuffer buffer = new PixelBuffer(bitmap.getWidth(), bitmap.getHeight());
         buffer.setRenderer(renderer);
@@ -295,9 +295,9 @@ public class GPUImage {
         renderer.deleteImage();
         buffer.destroy();
 
-        mRenderer.setFilter(mFilter);
+        getmRenderer().setFilter(mFilter);
         if (getCurrentBitmap() != null) {
-            mRenderer.setImageBitmap(getCurrentBitmap(), false);
+            getmRenderer().setImageBitmap(getCurrentBitmap(), false);
         }
         requestRender();
 
@@ -381,12 +381,12 @@ public class GPUImage {
      * @param runnable The runnable to be run on the OpenGL thread.
      */
     void runOnGLThread(Runnable runnable) {
-        mRenderer.runOnDrawEnd(runnable);
+        getmRenderer().runOnDrawEnd(runnable);
     }
 
     private int getOutputWidth() {
-        if (mRenderer != null && mRenderer.getFrameWidth() != 0) {
-            return mRenderer.getFrameWidth();
+        if (getmRenderer() != null && getmRenderer().getFrameWidth() != 0) {
+            return getmRenderer().getFrameWidth();
         } else if (getCurrentBitmap() != null) {
             return getCurrentBitmap().getWidth();
         } else {
@@ -398,8 +398,8 @@ public class GPUImage {
     }
 
     private int getOutputHeight() {
-        if (mRenderer != null && mRenderer.getFrameHeight() != 0) {
-            return mRenderer.getFrameHeight();
+        if (getmRenderer() != null && getmRenderer().getFrameHeight() != 0) {
+            return getmRenderer().getFrameHeight();
         } else if (getCurrentBitmap() != null) {
             return getCurrentBitmap().getHeight();
         } else {
@@ -416,6 +416,10 @@ public class GPUImage {
 
     public void setCurrentBitmap(Bitmap mCurrentBitmap) {
         this.mCurrentBitmap = mCurrentBitmap;
+    }
+
+    public GPUImageRenderer getmRenderer() {
+        return mRenderer;
     }
 
     @Deprecated
@@ -565,10 +569,10 @@ public class GPUImage {
 
         @Override
         protected Bitmap doInBackground(Void... params) {
-            if (mRenderer != null && mRenderer.getFrameWidth() == 0) {
+            if (getmRenderer() != null && getmRenderer().getFrameWidth() == 0) {
                 try {
-                    synchronized (mRenderer.mSurfaceChangedWaiter) {
-                        mRenderer.mSurfaceChangedWaiter.wait(3000);
+                    synchronized (getmRenderer().mSurfaceChangedWaiter) {
+                        getmRenderer().mSurfaceChangedWaiter.wait(3000);
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();

@@ -1,5 +1,6 @@
 package org.appsroid.panda;
 
+import org.appsroid.panda.gpuimage.GPUImageFilter;
 import org.appsroid.panda.gpuimage.GPUImageRenderer;
 
 import android.content.Context;
@@ -26,10 +27,12 @@ public class TouchGLView
 
 	public TouchGLView(Context c) {
 		super(c);
-		init(c);
+		GPUImageRenderer renderer = new GPUImageRenderer(new GPUImageFilter());
+		init(c, renderer);
 	}
 
-	public void init(Context c) {
+	public void init(Context c, GPUImageRenderer renderer) {
+		mRenderer = renderer;
 		mTapDetector = new GestureDetector(c, this);
 		mTapDetector.setIsLongpressEnabled(false);
 		mScaleDetector = new ScaleGestureDetector(c, this);
@@ -51,14 +54,17 @@ public class TouchGLView
 	public boolean onScroll(MotionEvent e1, MotionEvent e2,
 			final float dx, final float dy) {
 		// Forward the drag event to the renderer.
-		/*queueEvent(new Runnable() {
+		queueEvent(new Runnable() {
+
 			public void run() {
 				// This Runnable will be executed on the render
 				// thread.
 				// In a real app, you'd want to divide these by
 				// the display resolution first.
 				mRenderer.drag(dx, dy);
-			}});*/
+				requestRender();
+			}
+		});
 		mLastNonTapTouchEventTimeNS = System.nanoTime();
 		return true;
 	}
@@ -67,14 +73,15 @@ public class TouchGLView
 	public boolean onScale(ScaleGestureDetector detector) {
 		// Forward the scale event to the renderer.
 		final float amount = detector.getCurrentSpan() - mLastSpan;
-		/*queueEvent(new Runnable() {
+		queueEvent(new Runnable() {
 			public void run() {
 				// This Runnable will be executed on the render
 				// thread.
 				// In a real app, you'd want to divide this by
 				// the display resolution first.
 				mRenderer.zoom(amount);
-			}});*/
+				requestRender();
+			}});
 		mLastSpan = detector.getCurrentSpan();
 		mLastNonTapTouchEventTimeNS = System.nanoTime();
 		return true;

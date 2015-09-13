@@ -73,6 +73,9 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     private boolean mFlipVertical;
     private GPUImage.ScaleType mScaleType = GPUImage.ScaleType.CENTER_CROP;
 
+    private float mZoom = 1.0f;
+    private float mRot  = 0.0f;
+
     public GPUImageRenderer(final GPUImageFilter filter) {
         mFilter = filter;
         mRunOnDraw = new LinkedList<Runnable>();
@@ -86,7 +89,52 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
         mGLTextureBuffer = ByteBuffer.allocateDirect(TEXTURE_NO_ROTATION.length * 4)
                 .order(ByteOrder.nativeOrder())
                 .asFloatBuffer();
+        mGLTextureBuffer.put(TEXTURE_NO_ROTATION).position(0);
         setRotation(Rotation.NORMAL, false, false);
+    }
+
+    private void computeOutputVertices() {
+        if (mGLTextureBuffer != null) {
+            float imgAspectRatio = mOutputWidth/ (float)mOutputHeight;
+            float viewAspectRatio = mImageWidth / (float)mImageHeight;
+            float x0, y0, x1, y1;
+            if (imgAspectRatio > 1.0f) {
+                x0 = -1.0f ;
+                y0 = -1.0f / imgAspectRatio;
+                x1 = 1.0f ;
+                y1 = 1.0f / imgAspectRatio;
+            } else {
+                x0 = -1.0f *imgAspectRatio;
+                y0 = -1.0f;
+                x1 = 1.0f *imgAspectRatio;
+                y1 = 1.0f;
+            }
+            float[] coords = new float[] { x0, y0, x1, y0, x0, y1, x1, y1 };
+            // Scale coordinates with Zoom
+            for (int i = 0; i < 8; i++) {
+                coords[i] *= mZoom;
+            }
+            // Rotate coordinates
+            float cosa = (float)Math.cos(mRot);
+            float sina = (float)Math.sin(mRot);
+            float x,y;
+            for (int i = 0; i < 8; i+=2) {
+                x = coords[i]; y = coords[i+1];
+                coords[i]   = cosa*x-sina*y;
+                coords[i+1] = sina*x+cosa*y;
+            }
+            // Scale screen coords
+            if (viewAspectRatio > 1.0f) {
+                for (int i = 0; i < 8; i+=2) {
+                    coords[i] = coords[i]/viewAspectRatio;
+                }
+            } else {
+                for (int i = 1; i < 8; i+=2) {
+                    coords[i] = coords[i]*viewAspectRatio;
+                }
+            }
+            mGLTextureBuffer.put(coords).position(0);
+        }
     }
 
     @Override
@@ -100,6 +148,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
     public void onSurfaceChanged(final GL10 gl, final int width, final int height) {
         mOutputWidth = width;
         mOutputHeight = height;
+        computeOutputVertices();
         GLES20.glViewport(0, 0, width, height);
         GLES20.glUseProgram(mFilter.getProgram());
         mFilter.onOutputSizeChanged(width, height);
@@ -193,12 +242,26 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
 
             @Override
             public void run() {
-                GLES20.glDeleteTextures(1, new int[]{
+                GLES20.glDeleteTextures(1, new int[] {
                         mGLTextureId
                 }, 0);
                 mGLTextureId = NO_IMAGE;
             }
         });
+    }
+
+    // Called from the UI when the user drags the scene.
+    public void drag(float dx, float dy) {
+        // Use dx to rotate the image
+        mRot += dx/400.0f;
+        computeOutputVertices();
+    }
+
+    public void zoom(float z) {
+        mZoom += z/400.0f;
+        if (mZoom < 0.1f) { mZoom = 0.1f; }
+        else if (mZoom > 3.0f) { mZoom = 3.0f; }
+        computeOutputVertices();
     }
 
     public void setImageBitmap(final Bitmap bitmap) {
@@ -218,6 +281,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                 if (bitmap.getWidth() % 2 == 1) {
                     resizedBitmap = Bitmap.createBitmap(bitmap.getWidth() + 1, bitmap.getHeight(),
                             Bitmap.Config.ARGB_8888);
+
                     Canvas can = new Canvas(resizedBitmap);
                     can.drawARGB(0x00, 0x00, 0x00, 0x00);
                     can.drawBitmap(bitmap, 0, 0, null);
@@ -233,6 +297,7 @@ public class GPUImageRenderer implements Renderer, PreviewCallback {
                 }
                 mImageWidth = bitmap.getWidth();
                 mImageHeight = bitmap.getHeight();
+
                 adjustImageScaling();
             }
         });

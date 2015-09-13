@@ -130,7 +130,7 @@ public class PhotoActivity
 		setContentView(R.layout.activity_photo);
 		mGPUImage = new GPUImage(this);
 		TouchGLView touchGLView = (TouchGLView) findViewById(R.id.surfaceView);
-		touchGLView.init(this);
+		touchGLView.init(this, mGPUImage.getmRenderer());
 		mGPUImage.setGLSurfaceView(touchGLView);
 		mCameraHelper = new CameraHelper(this);
 		mCamera = new CameraLoader();
@@ -299,6 +299,7 @@ public class PhotoActivity
 				if (getLast_bitmap() == null) {
 					setLast_bitmap(bitmap);
 				}
+				//mGPUImage.setFilter(null);
 				mGPUImage.setImage(bitmap);
 			}
 		} catch (Exception e) {
@@ -397,7 +398,8 @@ public class PhotoActivity
 
 	public void cancelSelectedEffect(View view) {
 		if (!loading_dialog.isShowing()) {
-			setImage(getLast_bitmap());
+			//setImage(getLast_bitmap());
+			mGPUImage.setFilter(new GPUImageFilter());
 			hideEffectHolder();
 		}
 	}
